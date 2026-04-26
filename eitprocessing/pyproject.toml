@@ -1,0 +1,191 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "eitprocessing"
+version = "1.8.7"
+description = "Processing of lung image data from electrical impedance tomography."
+readme = "README.md"
+requires-python = ">=3.10"
+keywords = [
+    "Mechanical lung ventilation",
+    "Electrical impedance tomography",
+    "Image/data processing",
+    "Advanced respiratory care",
+]
+authors = [
+    { name = "Dani Bodor", email = "d.bodor@esciencecenter.nl" },
+    { name = "Peter Somhorst", email = "p.somhorst@erasmusmc.nl" },
+    { name = "Annemijn Jonkman", email = "a.jonkman@erasmusmc.nl" },
+    { name = "Walter Baccinelli", email = "w.baccinelli@esciencecenter.nl" },
+    { name = "Jantine Wisse-Smit", email = "j.j.smit@erasmusmc.nl" },
+    { name = "Juliette Francovich", email = "j.francovich@erasmusmc.nl" },
+]
+license = { text = "Apache-2.0 license" }
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Healthcare Industry",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+dependencies = [
+    "matplotlib>=3.10",
+    "numpy >= 1.24.2",
+    "scipy >= 1.10.1",
+    "anytree >= 2.12.1 ",
+    "typing_extensions",
+    "pyyaml",
+    "frozendict>=2.4.6",
+    "scikit-image>=0.25.2",
+]
+
+[project.optional-dependencies]
+# development dependency groups
+dev = [
+    "pytest >= 7.4.0,< 8.4.0",
+    "bump-my-version==0.28.1",
+    "coverage",
+    "pytest-cov",
+    "coveralls",
+    "ruff==0.12.10",
+]
+testing = ["pytest >= 7.4.0, < 8.4.0", "pytest-cov", "coveralls"]
+docs = [
+    "mkdocs >= 1.6.1",
+    "mkdocs-material >= 9.6.18",
+    "mkdocstrings >= 0.30.0",
+    "mkdocstrings-python >= 1.17.0, <2.0",
+    "mkdocs-exclude >= 1.0.2",
+    "mike >= 2.1.3",
+    "pymdown-extensions >= 10.16.1",
+    "black >= 25.1.0",
+    "mkdocs-jupyter >=0.25.1",
+]
+notebooks = [
+    "jupyter >= 1.0.0",
+    "jupytext >= 1.14.5",
+    "tqdm >= 4.65.0",
+    "ipympl",
+]
+publishing = ["build"]
+
+[project.urls]
+Documentation = "https://github.com/EIT-ALIVE/eitprocessing/blob/main/README.md"
+Repository = "https://github.com/EIT-ALIVE/eitprocessing/"
+Changelog = "https://github.com/EIT-ALIVE/eitprocessing/blob/main/CHANGELOG.md"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.coverage.run]
+branch = true
+source = ["eitprocessing"]
+command_line = "-m pytest"
+omit = ["tests/*", "*/tests/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "if TYPE_CHECKING:",
+    "if sys\\.version_info",
+    "@overload",
+    "if captures is not None:"
+]
+
+[tool.setuptools.packages.find]
+include = ["eitprocessing*", "eitprocessing.*"]
+exclude = ["tests*", "*tests.*", "*tests"]
+
+[tool.setuptools.package-data]
+eitprocessing = ["config/*.yaml", "py.typed"]
+
+[tool.ruff]
+output-format = "concise"
+line-length = 120
+extend-include = ["*.ipynb"]
+
+[tool.ruff.lint]
+select = ["ALL"]
+pydocstyle.convention = "google" # docstring settings
+ignore = [
+    # Unwanted (potentially)
+    "FBT",    # Using boolean arguments
+    "ANN002", # Missing type annotation for `*args`
+    "ANN003", # Missing type annotation for `**kwargs`
+    "ANN204", # Missing return type annotation for special (dunder) method
+    "S105",   # Possible hardcoded password
+    "S311",   # insecure random generators
+    "PT011",  # pytest-raises-too-broad
+    "PD011",  # Use of .values. Assumes .values refers to pandas dataframes, not object attributes
+    "TD",     # TODOs
+    "FIX002", # Resolve TODOs
+    "B028",   # No explicit `stacklevel` keyword argument found in warning
+    # "SIM108", # Use ternary operator (not sure if we want to ignore this)
+    # Unneeded docstrings
+    "D100",   # Missing module docstring
+    "D104",   # Missing public package docstring
+    "D105",   # Missing docstring in magic method
+    "D107",   # Missing docstring in `__init__`
+    "COM812", # missing trailing comma
+    "ISC001", # single line implicit string concatenation
+]
+
+# Set autofixing.
+fixable = ["ALL"]
+unfixable = [
+    "F401",   # unused imports (should not disappear while editing)
+    "RUF100", # unused noqa (should not disappear while editing)
+    "B905",   # autofill strictness of zip (think about preferred behavior)
+]
+extend-safe-fixes = [
+    "D415",   # First line should end with a period, question mark, or exclamation point
+    "D300",   # Use triple double quotes `"""`
+    "D200",   # One-line docstring should fit on one line
+    "TC",     # Format type checking only imports
+    "ISC001", # Implicitly concatenated strings on a single line
+    "EM",     # Exception message variables
+    "RUF013", # Implicit Optional
+    "B006",   # Mutable default argument
+    "TID252", # Absolute imports over relative imports
+]
+
+# Override default settings for specific rules
+pylint.max-args = 9
+flake8-tidy-imports.ban-relative-imports = "all" # Disallow all relative imports.
+isort.known-first-party = ["eitprocessing"]
+
+[tool.ruff.lint.per-file-ignores]
+"*.ipynb" = ["ERA001", "T203", "T201"] # Commented out code
+"tests/*" = [
+    "S101",    # Use of `assert` detected
+    "ANN201",  # Missing return type
+    "D103",    # Missing function docstring
+    "PLR2004", # Comparison against unnamed value
+    "SLF001",  # Private member accessed
+]
+"docs/*" = ["ALL"]
+
+[tool.bumpversion]
+current_version = "1.8.7"
+
+[[tool.bumpversion.files]]
+filename = "pyproject.toml"
+search = 'version = "{current_version}"'
+replace = 'version = "{new_version}"'
+
+[[tool.bumpversion.files]]
+filename = "CITATION.cff"
+search = 'version: "{current_version}"'
+replace = 'version: "{new_version}"'
+
+[[tool.bumpversion.files]]
+filename = "eitprocessing/__init__.py"
+search = '__version__ = "{current_version}"'
+replace = '__version__ = "{new_version}"'

@@ -1,0 +1,51 @@
+cff-version: 1.2.0
+title: "eitprocessing"
+authors:
+  - family-names: Bodor
+    given-names: Dani
+    email: d.bodor@esciencecenter.nl
+    affiliation: Netherlands eScience Center
+    orcid: "https://orcid.org/0000-0003-2109-2349"
+
+  - family-names: Somhorst
+    given-names: Peter
+    email: p.somhorst@erasmusmc.nl
+    affiliation: Erasmus MC
+    orcid: "https://orcid.org/0000-0003-3490-2080"
+
+  - family-names: Jonkman
+    given-names: Annemijn
+    email: a.jonkman@erasmusmc.nl
+    affiliation: Erasmus MC
+    orcid: "https://orcid.org/0000-0001-8778-5135"
+
+  - given-names: Walter
+    family-names: Baccinelli
+    email: w.baccinelli@esciencecenter.nl
+    affiliation: Netherlands eScience Center
+    orcid: "https://orcid.org/0000-0001-8888-4792"
+
+  - family-names: Wisse-Smit
+    given-names: Jantine
+    email: j.j.smit@erasmusmc.nl
+    affiliation: Erasmus MC
+    orcid: "https://orcid.org/0009-0006-6552-5459"
+
+  - family-names: Francovich
+    given-names: Juliette
+    email: j.francovich@erasmusmc.nl
+    affiliation: Erasmus MC
+    orcid: "https://orcid.org/0009-0004-0976-5082"
+
+date-released: 2023-03-23
+doi: 10.5281/zenodo.7869553
+version: "1.8.7"
+repository-code: "https://github.com/EIT-ALIVE/eitprocessing"
+keywords:
+  - Mechanical lung ventilation
+  - Electrical impedance tomography
+  - Image/data processing
+  - Advanced respiratory care
+
+message: "If you use this software, please cite it using these metadata."
+license: Apache-2.0
