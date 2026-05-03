@@ -1,3 +1,0 @@
-# Categories
-
-::: eitprocessing.categories.Category

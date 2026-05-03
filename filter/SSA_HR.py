@@ -2,45 +2,9 @@ import numpy as np
 import pandas as pd
 from scipy import signal
 
-from scipy.signal import butter, filtfilt, find_peaks, sosfiltfilt
+from scipy.signal import butter, filtfilt, find_peaks
 from scipy.linalg import svd
-
-# ------------------
-# Bandpass filter
-# ------------------
-
-def butter_bandpass_filter(signal, fs, lowcut, highcut, order=4):
-    """
-    Filtert een signaal met een Butterworth-banddoorlaatfilter.
-
-    Parameters
-    ----------
-    signal : np.ndarray
-        Ingangssignaal.
-    fs : float
-        Samplingfrequentie in Hz.
-    lowcut : float
-        Onderste afsnijfrequentie in Hz.
-    highcut : float
-        Bovenste afsnijfrequentie in Hz.
-    order : int, optional
-        Filterorde.
-
-    Returns
-    -------
-    np.ndarray
-        Bandgefilterd signaal.
-    """
-
-    # Bepaal de Nyquistfrequentie
-    nyq = 0.5 * fs
-
-    # Ontwerp het banddoorlaatfilter
-    b,a = butter(order, [lowcut / nyq, highcut / nyq], btype="band")
-
-    # Pas nul-fase filtering toe
-    return filtfilt(b, a, signal)
-
+from preprocessing import butter_bandpass_filter
 
 # ------------------
 # SSA functies
@@ -192,26 +156,6 @@ def band_energy(signal, fs, f_low, f_high):
         return 0.0
 
     return float(np.sum(spec[mask]))
-# def band_energy(signal, fs, f_low, f_high):
-    
-#     signal = np.asarray(signal)
-#     n = len(signal)
-
-#     if n == 0:
-#         return 0.0
-
-#     x = signal - np.mean(signal)
-#     w = np.hanning(n)
-#     xw = x * w
-
-#     freqs = np.fft.rfftfreq(n, d=1/fs)
-#     spec = np.abs(np.fft.rfft(xw)) ** 2
-
-#     mask = (freqs >= f_low) & (freqs <= f_high)
-#     if not np.any(mask):
-#         return 0.0
-
-#     return float(np.sum(spec[mask]))
 
 
 def signal_energy(x):
@@ -225,21 +169,7 @@ def signal_energy(x):
     return float(np.sum(x ** 2))
 
 
-
-
-# -----------------------------
-# Bepaling van RCs for CGO
-# -----------------------------
-
-# def rc_pair_clinical_impact(signal, RCs, pair):
-#     x_pair = np.sum(RCs[list(pair)], axis=0)
-#     denoised = signal - x_pair
-
-#     delta_raw = np.ptp(signal)
-#     delta_denoised = np.ptp(denoised)
-
-#     return delta_raw - delta_denoised
-def rc_pair_clinical_impact(signal, RCs, pair):
+def rc_pair_contribution(signal, RCs, pair):
     """
     Berekent de klinische impact van een paar SSA-componenten (RCs)
     op een signaal door te kijken naar de verandering in amplitude.
@@ -328,14 +258,14 @@ def extract_cgo_ssa(
 
         score = e_card - resp_penalty * e_resp
 
-        clinical_impact = rc_pair_clinical_impact(signal, RCs, pair)
+        contribution = rc_pair_contribution(signal, RCs, pair)
 
         pair_scores.append({
             "pair": pair,
             "cardiac_energy": e_card,
             "respiratory_energy": e_resp,
             "score": score,
-            "clinical_impact": clinical_impact,  
+            "contribution": contribution,  
         })
 
     best_item = max(pair_scores, key=lambda x: x["score"])
@@ -365,7 +295,7 @@ def rc_pair_overview_dataframe(pair_scores, RCs, rc_pairs, fs, hr_eit):
             "cardiac_energy",
             "respiratory_energy",
             "score",
-            "clinical_impact",
+            "contribution",
             "f_dom_hz",
             "f_target_hz",
             "chosen_cgo",
@@ -377,7 +307,7 @@ def rc_pair_overview_dataframe(pair_scores, RCs, rc_pairs, fs, hr_eit):
         "cardiac_energy",
         "respiratory_energy",
         "score",
-        "clinical_impact",
+        "contribution",
     ]
     df_scores = df_scores[score_cols].copy()
     df_scores["pair"] = df_scores["pair"].apply(tuple)
@@ -427,7 +357,7 @@ def rc_pair_overview_dataframe(pair_scores, RCs, rc_pairs, fs, hr_eit):
             "cardiac_energy",
             "respiratory_energy",
             "score",
-            "clinical_impact",
+            "contribution",
             "f_dom_hz",
             "f_target_hz",
             "chosen_cgo",
